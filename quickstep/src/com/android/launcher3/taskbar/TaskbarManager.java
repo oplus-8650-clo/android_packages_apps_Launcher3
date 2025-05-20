@@ -146,6 +146,9 @@ public class TaskbarManager implements DisplayDecorationListener {
     public static final Uri NAVIGATION_BAR_HINT = Settings.Secure.getUriFor(
             Settings.Secure.NAVIGATION_BAR_HINT);
 
+    public static final Uri NAVBAR_IME_SPACE = Settings.Secure.getUriFor(
+            Settings.Secure.NAVBAR_IME_SPACE);
+
     private final Context mBaseContext;
     private final int mPrimaryDisplayId;
     private final TaskbarNavButtonCallbacks mNavCallbacks;
@@ -251,6 +254,8 @@ public class TaskbarManager implements DisplayDecorationListener {
         debugPrimaryTaskbar("Settings changed! Recreating Taskbar!");
         recreateTaskbars();
     };
+
+    private final SettingsCache.OnChangeListener mOnTaskBarChangeListener = c -> System.exit(0);
 
     private PerceptibleTaskListener mTaskStackListener;
 
@@ -468,6 +473,8 @@ public class TaskbarManager implements DisplayDecorationListener {
                 .register(NAV_BAR_INVERSE, mOnSettingsChangeListener);
         SettingsCache.INSTANCE.get(mPrimaryWindowContext)
                 .register(NAVIGATION_BAR_HINT, mOnSettingsChangeListener);
+        SettingsCache.INSTANCE.get(mPrimaryWindowContext)
+                .register(NAVBAR_IME_SPACE, mOnTaskBarChangeListener);
         SystemDecorationChangeObserver.getINSTANCE().get(mPrimaryWindowContext)
                 .registerDisplayDecorationListener(this);
         mShutdownReceiver =
@@ -1134,6 +1141,8 @@ public class TaskbarManager implements DisplayDecorationListener {
                 .unregister(NAV_BAR_INVERSE, mOnSettingsChangeListener);
         SettingsCache.INSTANCE.get(mPrimaryWindowContext)
                 .unregister(NAVIGATION_BAR_HINT, mOnSettingsChangeListener);
+        SettingsCache.INSTANCE.get(mPrimaryWindowContext)
+                .unregister(NAVBAR_IME_SPACE, mOnTaskBarChangeListener);
         SystemDecorationChangeObserver.getINSTANCE().get(mPrimaryWindowContext)
                 .unregisterDisplayDecorationListener(this);
         debugPrimaryTaskbar("destroy: unregistering component callbacks");
